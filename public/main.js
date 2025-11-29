@@ -9,6 +9,9 @@ async function setup() {
         ['yesterday', 'yesterday', '/yesterday'],
         ['one month ago', 'lastmonth', '/lastmonth'],
         ['one year ago', 'lastyear', '/lastyear'],
+        ['all-time highs', 'max', '/max'],
+        ['all-time lows', 'min', '/min'],
+        ['average', 'avg', '/avg'],
     ];
 
     for (let i = 0; i < cards.length; i++) {
@@ -96,14 +99,14 @@ function formatValue(key, value) {
         case 'date':
             return null
         case 'co2':
-            display = `<span style="color: ${co2Color(value)}">${display}</span> ppm co2`;
+            display = `<span style="color: ${co2Color(value)}">${Math.round(value).toLocaleString()}</span> ppm co2`;
             break;
         case 'temperature':
             const rounded = Number(value.toFixed(1))
             display = `${rounded.toLocaleString()}°F`;
             break;
         case 'humidity':
-            display = `${display}% humidity`;
+            display = `${Math.round(display)}% humidity`;
             break;
         case 'pressure':
             display = `${Math.round(value).toLocaleString()} hPa`;

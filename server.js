@@ -116,6 +116,28 @@ const apiCall = async function(endpoint, res) {
             }
             return readings;
         },
+        "/max": () => {
+            const query = database.prepare(`select max(co2) as co2, max(temperature) as temperature,
+                max(humidity) as humidity, max(pressure) as pressure from records`);
+            const results = query.all();
+            return results[0];
+        },
+        "/min": () => {
+            const query = database.prepare(`select min(co2) as co2, min(temperature) as temperature,
+                min(humidity) as humidity, min(pressure) as pressure from records`);
+            const results = query.all();
+            return results[0];
+        },
+        "/avg": () => {
+            const date = new Date();
+            date.setFullYear(date.getFullYear() - 1);
+            const iso = date.toISOString();
+
+            const query = database.prepare(`select avg(co2) as co2, avg(temperature) as temperature,
+                avg(humidity) as humidity, avg(pressure) as pressure from records`);
+            const results = query.all();
+            return results[0];
+        },
     }
 
     if (endpoints[endpoint]) {
