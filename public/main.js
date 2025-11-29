@@ -4,7 +4,7 @@ async function setup() {
     const output = document.getElementById('output');
 
     const cards = [
-        ['right now', 'latest', '/latest'],
+        ['current', 'latest', '/latest'],
         ['outside', 'outside', '/outside'],
         ['average today', 'avgtoday', '/avgtoday'],
         ['average yesterday', 'avgyesterday', '/avgyesterday'],
