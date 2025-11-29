@@ -1,6 +1,6 @@
 const api_url = `${location.protocol}//${location.host}/api/v1`;
 
-async function update() {
+async function setup() {
     const output = document.getElementById('output');
 
     const cards = [
@@ -11,19 +11,38 @@ async function update() {
         ['one year ago', '/lastyear'],
     ];
 
-    let html = ''
     for (let i = 0; i < cards.length; i++) {
         const [title, endpoint] = cards[i];
-        const reading = await fetch(`${api_url}${endpoint}`).then(res => res.json());
-        html += formatReading(title, reading);
+        const card = newCard(title, endpoint);
+        output.appendChild(card);
     }
+}
 
-    output.innerHTML = html;
+function retryFetch(resource, options, backoff = 500) {
+    function wait(delay){
+        return new Promise((resolve) => setTimeout(resolve, delay));
+    }
+    function onError(_err){
+        return wait(backoff).then(() => retryFetch(resource, options, backoff * 2));
+    }
+    return fetch(resource, options).catch(onError);
+}
+
+function newCard(title, endpoint) {
+    const card = document.createElement('div');
+    card.id = `${title}-card`;
+    card.classList.add('card');
+    const update = async () => {
+        const reading = await retryFetch(`${api_url}${endpoint}`).then(res => res.json());
+        card.innerHTML = formatReading(title, reading);
+    }
+    update();
+    setInterval(update, 1000);
+    return card;
 }
 
 function formatReading(title, reading) {
-    result = '<div class="reading">';
-    result += `<span id="${title}">${title}</span>`
+    result = `<span id="${title}-title">${title}</span>`;
     Object.entries(reading).forEach(([key, value]) => {
         let display = value.toLocaleString();
         switch (key) {
@@ -46,8 +65,6 @@ function formatReading(title, reading) {
 
         result += `<span id="${title}-${key}">${display}</span>`
     });
-
-    result += '</div>';
     return result;
 }
 
@@ -61,5 +78,4 @@ function co2Color(co2) {
     return 'green';
 }
 
-update()
-window.setInterval(update, 1000)
+setup()

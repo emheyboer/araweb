@@ -16,7 +16,7 @@ html,body {
     padding: 0;
 }
 
-div.reading {
+div.card {
     display: flex;
     flex-direction: column;
     margin: 3vh;
