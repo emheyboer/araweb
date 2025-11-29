@@ -85,19 +85,19 @@ function formatValue(key, value) {
     let display = value.toLocaleString();
     switch (key) {
         case 'date':
-            display = new Date(value).toLocaleString();
-            return;
+            return null
         case 'co2':
             display = `<span style="color: ${co2Color(value)}">${display}</span> ppm co2`;
             break;
         case 'temperature':
-            display = `${display}°F`;
+            const rounded = Number(value.toFixed(1))
+            display = `${rounded.toLocaleString()}°F`;
             break;
         case 'humidity':
             display = `${display}% humidity`;
             break;
         case 'pressure':
-            display = `${display} hPa`;
+            display = `${Math.round(value).toLocaleString()} hPa`;
             break;
     }
     return display;
