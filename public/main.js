@@ -59,7 +59,10 @@ class Card {
         const reading = await retryFetch(`${api_url}${this.endpoint}`).then(res => res.json());
 
         this.rows.forEach(row => {
-            row.span.innerHTML = formatValue(row.key, reading[row.key]);
+            const newValue = formatValue(row.key, reading[row.key]);
+            if (newValue != row.span.innerHTML) {
+                row.span.innerHTML = newValue;
+            }
         })
 
         setTimeout(() => {
