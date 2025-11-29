@@ -14,7 +14,7 @@ async function setup() {
     for (let i = 0; i < cards.length; i++) {
         const [title, id, endpoint] = cards[i];
         const card = new Card(title, id, endpoint)
-        output.appendChild(card.div);
+        output.appendChild(card.html);
     }
 }
 
@@ -33,15 +33,20 @@ class Card {
     }
 
     initDiv() {
-        this.div = document.createElement('div');
-        this.div.id = this.id;
-        this.div.classList.add('card');
+        this.outer = document.createElement('div');
+        this.outer.id = this.id;
+        this.outer.classList.add('card-outer');
+
+        this.inner = document.createElement('div');
+        this.inner.id = `${this.id}-inner`;
+        this.inner.classList.add('card-inner');
+        this.outer.appendChild(this.inner);
 
         const span = document.createElement('span');
         span.id = `${this.id}-title`;
         span.innerText = this.title;
-        this.div.appendChild(span);
         span.classList.add('title');
+        this.inner.appendChild(span);
     }
 
     initRows(keys) {
@@ -51,8 +56,12 @@ class Card {
             span.id = `${this.id}-${key}`;
             span.classList.add('row', key);
             this.rows.push({ key, span });
-            this.div.appendChild(span);
+            this.inner.appendChild(span);
         })
+    }
+
+    get html() {
+        return this.outer;
     }
 
     async update() {

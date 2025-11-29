@@ -16,12 +16,25 @@ html,body {
     padding: 0;
 }
 
-div.card {
+div.card-outer {
+    border: solid thin black;
+    width: max-content;
+    height: max-content;
+    margin: 2vh;
+}
+
+div.card-inner {
     display: flex;
     flex-direction: column;
-    margin: 3vh;
-    margin-top: 0;
+    margin: 1vh;
     padding: 0;
+    width: max-content;
+}
+
+#output {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 
 div {
