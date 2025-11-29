@@ -20,7 +20,7 @@ div.card-outer {
     border: solid thin black;
     width: max-content;
     height: max-content;
-    margin: 2vh;
+    margin: 1vh;
 }
 
 div.card-inner {
@@ -39,5 +39,5 @@ div.card-inner {
 
 div {
     flex: 1;
-    font-size: 3vh;
+    font-size: 4vmin;
 }
