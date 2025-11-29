@@ -9,9 +9,9 @@ async function setup() {
         ['yesterday', 'yesterday', '/yesterday'],
         ['one month ago', 'lastmonth', '/lastmonth'],
         ['one year ago', 'lastyear', '/lastyear'],
+        ['average', 'avg', '/avg'],
         ['all-time highs', 'max', '/max'],
         ['all-time lows', 'min', '/min'],
-        ['average', 'avg', '/avg'],
     ];
 
     for (let i = 0; i < cards.length; i++) {
