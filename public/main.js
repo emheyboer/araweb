@@ -5,11 +5,15 @@ async function setup() {
 
     const cards = [
         ['right now', 'latest', '/latest'],
-        ['outside right now', 'outside', '/outside'],
+        ['outside', 'outside', '/outside'],
+        ['average today', 'avgtoday', '/avgtoday'],
+        ['average yesterday', 'avgyesterday', '/avgyesterday'],
+        ['average this month', 'avgmonth', '/avgmonth'],
+        ['average this year', 'avgyear', '/avgyear'],
         ['yesterday', 'yesterday', '/yesterday'],
         ['one month ago', 'lastmonth', '/lastmonth'],
         ['one year ago', 'lastyear', '/lastyear'],
-        ['average', 'avg', '/avg'],
+        ['all-time average', 'avg', '/avg'],
         ['all-time highs', 'max', '/max'],
         ['all-time lows', 'min', '/min'],
     ];

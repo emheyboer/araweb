@@ -35,7 +35,7 @@ const server = http.createServer(async function(req, res) {
     }
 });
 
-const streamFile = async function(url) {
+async function streamFile(url) {
     const mime_types = {
         default: "application/octet-stream",
         html: "text/html; charset=UTF-8",
@@ -66,7 +66,7 @@ const streamFile = async function(url) {
     return { found, mime_type, stream };
 };
 
-const apiCall = async function(endpoint, res) {
+async function apiCall(endpoint, res) {
     res.setHeader('Access-Control-Allow-Origin', `http://${hostname}:8080`);
 
     const endpoints = {
@@ -119,9 +119,52 @@ const apiCall = async function(endpoint, res) {
             return {value, ttl: 60};
         },
         "/avg": () => {
-            const query = database.prepare(`select avg(co2) as co2, avg(temperature) as temperature,
-                avg(humidity) as humidity, avg(pressure) as pressure from records`);
-            const value = query.all()[0];
+            const value = avgOverPeriod();
+            return {value, ttl: 60};
+        },
+        "/avgtoday": () => {
+            const start = new Date();
+            start.setHours(0);
+            start.setMinutes(0);
+            start.setMilliseconds(0);
+
+            const value = avgOverPeriod(start);
+            return {value, ttl: 60};
+        },
+        "/avgyesterday": () => {
+            const start = new Date();
+            start.setDate(start.getDate() - 1);
+            start.setHours(0);
+            start.setMinutes(0);
+            start.setMilliseconds(0);
+
+            const end = new Date();
+            end.setHours(0);
+            end.setMinutes(0);
+            end.setMilliseconds(0);
+
+            const value = avgOverPeriod(start, end);
+            return {value, ttl: 60};
+        },
+        "/avgmonth": () => {
+            const start = new Date();
+            start.setDate(1);
+            start.setHours(0);
+            start.setMinutes(0);
+            start.setMilliseconds(0);
+
+            const value = avgOverPeriod(start);
+            return {value, ttl: 60};
+        },
+        "/avgyear": () => {
+            const start = new Date();
+            start.setDate(1);
+            start.setMonth(0);
+            start.setHours(0);
+            start.setMinutes(0);
+            start.setMilliseconds(0);
+
+            const value = avgOverPeriod(start);
             return {value, ttl: 60};
         },
     }
@@ -150,7 +193,7 @@ const apiCall = async function(endpoint, res) {
     }
 }
 
-const fetchOutdoorReadings = async function() {
+async function fetchOutdoorReadings() {
     const json = await retryFetch(weatherApi).then(r => r.json());
 
     const readings = {
@@ -162,6 +205,26 @@ const fetchOutdoorReadings = async function() {
     }
 
     return readings;
+}
+
+function avgOverPeriod(start, end) {
+    let query_str = `select avg(co2) as co2, avg(temperature) as temperature,
+        avg(humidity) as humidity, avg(pressure) as pressure from records`;
+    if (start || end) {
+        query_str += ' where';
+    }
+    if (start) {
+        query_str += ` date > '${start.toISOString()}'`;
+    }
+    if (end) {
+        if (start) {
+            query_str += ' and';
+        }
+        query_str += ` date < '${end.toISOString()}'`;
+    }
+    const query = database.prepare(query_str);
+    const value = query.all()[0];
+    return value;
 }
 
 function retryFetch(resource, options, backoff = 500) {
