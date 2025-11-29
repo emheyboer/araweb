@@ -71,9 +71,22 @@ async function apiCall(endpoint, res) {
 
     const endpoints = {
         "/latest": () => {
-            const query = database.prepare('select * from records order by date desc limit 1');
-            const value = query.all()[0];
-            return {value, ttl: 1};
+            const query = database.prepare('select * from records order by date desc limit 2');
+            const last_two = query.all();
+            const latest_time = new Date(last_two[0].date);
+            const prev_time = new Date(last_two[1].date);
+            const interval = (latest_time - prev_time); // # of secs between readings
+            const next_time = new Date(latest_time.getTime() + interval);
+            let ttl = (next_time - new Date()) / 1000; // # of secs until the next update
+
+            const cached_time = new Date(cache['/latest']?.value?.date);
+            if (cached_time.getTime() == latest_time.getTime()) {
+                // there should be new readings, but we don't have them yet so keep asking
+                ttl = 1;
+            }
+
+            const value = last_two[0];
+            return {value, ttl};
         },
         "/yesterday": () => {
             const date = new Date();
