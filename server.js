@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const { DatabaseSync } = require('node:sqlite');
 const http = require('http');
-require('dotenv').config();
+require('dotenv').config({ quiet: true });
 
 const database = new DatabaseSync(process.env.SQLITE_DB);
 const hostname = process.env.HOSTNAME;
