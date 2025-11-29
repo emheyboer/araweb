@@ -99,7 +99,7 @@ async function fetchOutdoorReadings() {
 
     const readings = {
         'date': new Date(json['dt'] * 1000).toISOString(),
-        'co2': 420,
+        'co2': 440,
         'temperature': json['main']['temp'],
         'pressure': json['main']['pressure'],
         'humidity': json['main']['humidity'],
