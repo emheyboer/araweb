@@ -1,4 +1,4 @@
-const api_url = `${location.protocol}//${location.hostname}:${Number(location.port) + 1}/api/v1`;
+const api_url = `${location.protocol}//${location.host}/api/v1`;
 
 async function update() {
     const output = document.getElementById('output');
