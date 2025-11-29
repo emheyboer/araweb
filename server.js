@@ -75,7 +75,7 @@ async function apiCall(endpoint, res) {
             const last_two = query.all();
             const latest_time = new Date(last_two[0].date);
             const prev_time = new Date(last_two[1].date);
-            const interval = (latest_time - prev_time); // # of secs between readings
+            const interval = (latest_time - prev_time); // # time between readings
             const next_time = new Date(latest_time.getTime() + interval);
             let ttl = (next_time - new Date()) / 1000; // # of secs until the next update
 
