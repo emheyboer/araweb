@@ -11,11 +11,7 @@ const port = process.env.PORT;
 const weatherApi = `${process.env.WEATHER_API_URL}?lat=${
     process.env.LAT}&lon=${process.env.LONG}&appid=${process.env.WEATHER_API_KEY}&units=imperial`
 
-var cache = {
-    'outside': {
-        'from': new Date(0),
-    }
-}
+var cache = {}
 
 const server = http.createServer(async function(req, res) {
     if (req.url.startsWith('/api/v1')) {
@@ -76,8 +72,8 @@ const apiCall = async function(endpoint, res) {
     const endpoints = {
         "/latest": () => {
             const query = database.prepare('select * from records order by date desc limit 1');
-            const results = query.all();
-            return results[0];
+            const value = query.all()[0];
+            return {value, ttl: 1};
         },
         "/yesterday": () => {
             const date = new Date();
@@ -85,8 +81,8 @@ const apiCall = async function(endpoint, res) {
             const iso = date.toISOString();
 
             const query = database.prepare(`select * from records where date < '${iso}' order by date desc limit 1`);
-            const results = query.all();
-            return results[0];
+            const value = query.all()[0];
+            return {value, ttl: 60};
         },
         "/lastmonth": () => {
             const date = new Date();
@@ -94,8 +90,8 @@ const apiCall = async function(endpoint, res) {
             const iso = date.toISOString();
 
             const query = database.prepare(`select * from records where date < '${iso}' order by date desc limit 1`);
-            const results = query.all();
-            return results[0];
+            const value = query.all()[0];
+            return {value, ttl: 60};
             },
         "/lastyear": () => {
             const date = new Date();
@@ -103,48 +99,46 @@ const apiCall = async function(endpoint, res) {
             const iso = date.toISOString();
 
             const query = database.prepare(`select * from records where date < '${iso}' order by date desc limit 1`);
-            const results = query.all();
-            return results[0];
+            const value = query.all()[0];
+            return {value, ttl: 60};
         },
         "/outside": async () => {
-            const now = new Date();
-            let readings = cache['outside']['value'];
-            if (now - cache['outside']['from'] > 60*1000) {
-                readings = await fetchOutdoorReadings();
-                cache['outside']['value'] = readings;
-                cache['outside']['from'] = new Date();
-            }
-            return readings;
+            const value = await fetchOutdoorReadings();
+            return {value, ttl: 60};
         },
         "/max": () => {
             const query = database.prepare(`select max(co2) as co2, max(temperature) as temperature,
                 max(humidity) as humidity, max(pressure) as pressure from records`);
-            const results = query.all();
-            return results[0];
+            const value = query.all()[0];
+            return {value, ttl: 60};
         },
         "/min": () => {
             const query = database.prepare(`select min(co2) as co2, min(temperature) as temperature,
                 min(humidity) as humidity, min(pressure) as pressure from records`);
-            const results = query.all();
-            return results[0];
+            const value = query.all()[0];
+            return {value, ttl: 60};
         },
         "/avg": () => {
-            const date = new Date();
-            date.setFullYear(date.getFullYear() - 1);
-            const iso = date.toISOString();
-
             const query = database.prepare(`select avg(co2) as co2, avg(temperature) as temperature,
                 avg(humidity) as humidity, avg(pressure) as pressure from records`);
-            const results = query.all();
-            return results[0];
+            const value = query.all()[0];
+            return {value, ttl: 60};
         },
     }
 
     if (endpoints[endpoint]) {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'application/json');
-        const json = await endpoints[endpoint](res);
-        res.end(`${JSON.stringify(json, null, 2)}`);
+
+        if (!cache[endpoint] || cache[endpoint].expires < new Date()) {
+            const json = await endpoints[endpoint](res);
+            cache[endpoint] = {
+                'expires': new Date(new Date().getTime() + json.ttl * 1000),
+                'value': json.value,
+            }
+        }
+        const entry = cache[endpoint];
+        res.end(`${JSON.stringify(entry, null, 2)}`);
     } else if (endpoint == '/' || endpoint == '') {
         res.statusCode = 200;
         res.setHeader('Content-Type', 'text/plain');

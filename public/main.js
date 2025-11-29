@@ -68,7 +68,9 @@ class Card {
     }
 
     async update() {
-        const reading = await retryFetch(`${api_url}${this.endpoint}`).then(res => res.json());
+        const entry = await retryFetch(`${api_url}${this.endpoint}`).then(res => res.json());
+        const ttl = new Date(entry.expires) - new Date();
+        const reading = entry.value;
 
         this.rows.forEach(row => {
             const newValue = formatValue(row.key, reading[row.key]);
@@ -79,7 +81,7 @@ class Card {
 
         setTimeout(() => {
             this.update();
-        }, 1000);
+        }, ttl);
     }
 }
 
