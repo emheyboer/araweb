@@ -54,6 +54,13 @@ class Card {
         span.innerText = this.title;
         span.classList.add('title');
         this.inner.appendChild(span);
+
+        if (this.id == 'latest') {
+            this.age = document.createElement('span');
+            this.age.id = 'age';
+            span.appendChild(this.age);
+            this.update_age();
+        }
     }
 
     initRows(keys) {
@@ -71,13 +78,27 @@ class Card {
         return this.outer;
     }
 
+    async update_age() {
+        if (this.reading) {
+            const delta = new Date() - new Date(this.reading.date)
+            const secs = Math.round(delta / 1000);
+            this.age.innerText = ` (${secs}s)`;
+        } else {
+            this.age.innerText = ``;
+        }
+
+        setTimeout(() => {
+            this.update_age();
+        }, 1000);
+    }
+
     async update() {
         const entry = await retryFetch(`${api_url}${this.endpoint}`).then(res => res.json());
         const ttl = new Date(entry.expires) - new Date();
-        const reading = entry.value;
+        this.reading = entry.value;
 
         this.rows.forEach(row => {
-            const newValue = formatValue(row.key, reading[row.key]);
+            const newValue = formatValue(row.key, this.reading[row.key]);
             if (newValue != row.span.innerHTML) {
                 row.span.innerHTML = newValue;
             }

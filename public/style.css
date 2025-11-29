@@ -37,6 +37,10 @@ div.card-inner {
     flex-wrap: wrap;
 }
 
+#age {
+    font-size: 3vmin;
+}
+
 div {
     flex: 1;
     font-size: 4vmin;
