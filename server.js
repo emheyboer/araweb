@@ -135,7 +135,7 @@ const apiCall = async function(endpoint, res) {
 }
 
 const fetchOutdoorReadings = async function() {
-    const json = await fetch(weatherApi).then(r => r.json());
+    const json = await retryFetch(weatherApi).then(r => r.json());
 
     const readings = {
         'date': new Date(json['dt'] * 1000).toISOString(),
@@ -146,6 +146,16 @@ const fetchOutdoorReadings = async function() {
     }
 
     return readings;
+}
+
+function retryFetch(resource, options, backoff = 500) {
+    function wait(delay){
+        return new Promise((resolve) => setTimeout(resolve, delay));
+    }
+    function onError(_err){
+        return wait(backoff).then(() => retryFetch(resource, options, backoff * 2));
+    }
+    return fetch(resource, options).catch(onError);
 }
 
 server.listen(port, hostname, () => {
