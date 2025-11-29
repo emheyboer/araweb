@@ -1,0 +1,30 @@
+html {
+    font-family: Verdana, sans-serif;
+    touch-action: manipulation;
+}
+
+* {
+    box-sizing: border-box;
+    background-color: #f5eddd;
+}
+
+html,body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+}
+
+div.reading {
+    display: flex;
+    flex-direction: column;
+    margin: 3vh;
+    margin-top: 0;
+    padding: 0;
+}
+
+div {
+    flex: 1;
+    font-size: 3vh;
+}
