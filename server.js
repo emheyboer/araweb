@@ -155,7 +155,15 @@ async function apiCall(endpoint, res) {
             end.setMilliseconds(0);
 
             const value = avgOverPeriod(start, end);
-            return {value, ttl: 60};
+
+            const next_day = new Date();
+            next_day.setDate(next_day.getDate() + 1);
+            next_day.setHours(0);
+            next_day.setMinutes(0);
+            next_day.setMilliseconds(0);
+            const ttl = (next_day - new Date()) / 1000;
+            
+            return {value, ttl};
         },
         "/avgmonth": () => {
             const start = new Date();
