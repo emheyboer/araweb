@@ -8,4 +8,5 @@
 3. Navigate to `HOSTNAME:PORT` in any web browser
 
 # Output
-<img width="25%" height="25%" src=images/mobile.jpg /><img width="50%" height="50%" src=images/desktop.jpg />
+<img width="25%" height="25%" src=images/mobile_light.jpg /><img width="25%" height="25%" src=images/mobile_dark.jpg />
+<img width="50%" height="50%" src=images/desktop_light.jpg /><img width="50%" height="50%" src=images/desktop_dark.jpg />
