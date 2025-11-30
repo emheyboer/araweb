@@ -67,8 +67,6 @@ async function streamFile(url) {
 };
 
 async function apiCall(endpoint, res) {
-    res.setHeader('Access-Control-Allow-Origin', `http://${hostname}:8080`);
-
     const endpoints = {
         "/latest": () => {
             const query = database.prepare('select * from records order by date desc limit 2');
