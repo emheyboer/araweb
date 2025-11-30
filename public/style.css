@@ -45,3 +45,32 @@ div {
     flex: 1;
     font-size: 4vmin;
 }
+
+.status-low {
+    --color-low: green;
+    color: var(--color-low);
+}
+.status-medium {
+    --color-medium: darkorange;
+    color: var(--color-medium);
+}
+.status-high {
+    --color-high: red;
+    color: var(--color-high);
+}
+
+@media (prefers-color-scheme: dark) {
+    html {
+        filter: invert(.90);
+    }
+
+    .status-low {
+        color: rgb(from var(--color-low) calc(255 - r) calc(255 - g) calc(255 - b));
+    }
+    .status-medium {
+        color: rgb(from var(--color-medium) calc(255 - r) calc(255 - g) calc(255 - b));
+    }
+    .status-high {
+        color: rgb(from var(--color-high) calc(255 - r) calc(255 - g) calc(255 - b));
+    }
+}

@@ -126,7 +126,7 @@ function formatValue(key, value) {
         case 'date':
             return null
         case 'co2':
-            display = `<span style="color: ${co2Color(value)}">${Math.round(value).toLocaleString()}</span> ppm co2`;
+            display = `<span class="${co2Status(value)}">${Math.round(value).toLocaleString()}</span> ppm co2`;
             break;
         case 'temperature':
             const rounded = Number(value.toFixed(1))
@@ -142,14 +142,14 @@ function formatValue(key, value) {
     return display;
 }
 
-function co2Color(co2) {
+function co2Status(co2) {
     if (co2 >= 1400) {
-        return 'red';
+        return 'status-high';
     }
     if (co2 >= 1000) {
-        return 'darkorange';
+        return 'status-medium';
     }
-    return 'green';
+    return 'status-low';
 }
 
 setup()
