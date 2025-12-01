@@ -181,6 +181,10 @@ async function apiCall(endpoint, res) {
             const value = avgOverPeriod(start);
             return {value, ttl: 60};
         },
+        "/count": () => {
+            const query = database.prepare(`select count(*) from records`);
+            return {value: query.get(), ttl: 60};
+        },
     }
 
     if (endpoints[endpoint]) {
