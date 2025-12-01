@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 require('dotenv').config({ quiet: true });
 
-const database = new DatabaseSync(process.env.SQLITE_DB);
+const database = new DatabaseSync(process.env.SQLITE_DB, {readOnly: true, timeout: 1000});
 const hostname = process.env.HOSTNAME;
 const port = process.env.PORT;
 const weatherApi = `${process.env.WEATHER_API_URL}?lat=${
@@ -92,8 +92,7 @@ async function apiCall(endpoint, res) {
             const iso = date.toISOString();
 
             const query = database.prepare(`select * from records where date < '${iso}' order by date desc limit 1`);
-            const value = query.all()[0];
-            return {value, ttl: 60};
+            return {value: query.get(), ttl: 60};
         },
         "/lastmonth": () => {
             const date = new Date();
@@ -101,8 +100,7 @@ async function apiCall(endpoint, res) {
             const iso = date.toISOString();
 
             const query = database.prepare(`select * from records where date < '${iso}' order by date desc limit 1`);
-            const value = query.all()[0];
-            return {value, ttl: 60};
+            return {value: query.get(), ttl: 60};
             },
         "/lastyear": () => {
             const date = new Date();
@@ -110,8 +108,7 @@ async function apiCall(endpoint, res) {
             const iso = date.toISOString();
 
             const query = database.prepare(`select * from records where date < '${iso}' order by date desc limit 1`);
-            const value = query.all()[0];
-            return {value, ttl: 60};
+            return {value: query.get(), ttl: 60};
         },
         "/outside": async () => {
             const value = await fetchOutdoorReadings();
@@ -120,14 +117,12 @@ async function apiCall(endpoint, res) {
         "/max": () => {
             const query = database.prepare(`select max(co2) as co2, max(temperature) as temperature,
                 max(humidity) as humidity, max(pressure) as pressure from records`);
-            const value = query.all()[0];
-            return {value, ttl: 60};
+            return {value: query.get(), ttl: 60};
         },
         "/min": () => {
             const query = database.prepare(`select min(co2) as co2, min(temperature) as temperature,
                 min(humidity) as humidity, min(pressure) as pressure from records`);
-            const value = query.all()[0];
-            return {value, ttl: 60};
+            return {value: query.get(), ttl: 60};
         },
         "/avg": () => {
             const value = avgOverPeriod();
@@ -242,8 +237,7 @@ function avgOverPeriod(start, end) {
         query_str += ` date < '${end.toISOString()}'`;
     }
     const query = database.prepare(query_str);
-    const value = query.all()[0];
-    return value;
+    return query.get();
 }
 
 function retryFetch(resource, options, backoff = 500) {
