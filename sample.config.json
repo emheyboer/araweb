@@ -1,0 +1,11 @@
+{
+  "sqlite_path": "records.sqlite",
+  "hostname": "localhost",
+  "port": 8080,
+  "weather": {
+    "api_url": "https://api.openweathermap.org/data/2.5/weather",
+    "api_key": "",
+    "lat": "",
+    "long": ""
+  }
+}

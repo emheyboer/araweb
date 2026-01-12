@@ -3,13 +3,11 @@ const { DatabaseSync } = require('node:sqlite');
 const http = require('http');
 const fs = require('node:fs');
 const path = require('node:path');
-require('dotenv').config({ quiet: true });
+const config = require('./config.json');
 
-const database = new DatabaseSync(process.env.SQLITE_DB, {readOnly: true, timeout: 1000});
-const hostname = process.env.HOSTNAME;
-const port = process.env.PORT;
-const weatherApi = `${process.env.WEATHER_API_URL}?lat=${
-    process.env.LAT}&lon=${process.env.LONG}&appid=${process.env.WEATHER_API_KEY}&units=imperial`
+const database = new DatabaseSync(config.sqlite_path, {readOnly: true, timeout: 1000});
+const weatherUrl = `${config.weather.api_url}?lat=${
+    config.weather.lat}&lon=${config.weather.long}&appid=${config.weather.api_key}&units=imperial`;
 
 var cache = {}
 
@@ -212,7 +210,7 @@ async function apiCall(endpoint, res) {
 }
 
 async function fetchOutdoorReadings() {
-    const json = await retryFetch(weatherApi).then(r => r.json());
+    const json = await retryFetch(weatherUrl).then(r => r.json());
 
     const readings = {
         'date': new Date(json['dt'] * 1000).toISOString(),
@@ -254,6 +252,6 @@ function retryFetch(resource, options, backoff = 500) {
     return fetch(resource, options).catch(onError);
 }
 
-server.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
+server.listen(config.port, config.hostname, () => {
+    console.log(`Server running at http://${config.hostname}:${config.port}/`);
 });

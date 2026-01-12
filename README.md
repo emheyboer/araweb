@@ -3,9 +3,9 @@
 
 # Setup
 1. Run `aranet.py` with `update = true` and `monitor = true` to add new readings to the sqlite db as they come in
-2. Copy `example.env` to `.env` and set each variable (make sure `SQLITE_DB` is pointing to the same file as above)
-2. Start `araweb` by running `node server.js`
-3. Navigate to `HOSTNAME:PORT` in any web browser
+2. Copy `sample.config.json` to `config.json` and set each variable (make sure `sqlite_path` is pointing to the same file as above)
+2. Start `araweb` by running `npm run start`
+3. Navigate to `hostname:port` in any web browser
 
 # Output
 <img width="25%" height="25%" src=images/mobile_light.jpg /><img width="25%" height="25%" src=images/mobile_dark.jpg />
