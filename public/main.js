@@ -1,5 +1,3 @@
-const api_url = `${location.protocol}//${location.host}/api/v1`;
-
 async function setup() {
     const output = document.getElementById('output');
 
@@ -93,7 +91,7 @@ class Card {
     }
 
     async update() {
-        const entry = await retryFetch(`${api_url}${this.endpoint}`).then(res => res.json());
+        const entry = await retryFetch(`api/v1${this.endpoint}`).then(res => res.json());
         const ttl = new Date(entry.expires) - new Date();
         this.reading = entry.value;
 
