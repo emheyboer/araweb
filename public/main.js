@@ -1,4 +1,6 @@
 async function setup() {
+    const show_age = !(await lowRefreshRate());
+
     const output = document.getElementById('output');
 
     const cards = [
@@ -18,18 +20,18 @@ async function setup() {
 
     for (let i = 0; i < cards.length; i++) {
         const [title, id, endpoint] = cards[i];
-        const card = new Card(title, id, endpoint)
+        const card = new Card(title, id, endpoint, id == 'latest' && show_age);
         output.appendChild(card.html);
     }
 }
 
 class Card {
-    constructor(title, id, endpoint) {
+    constructor(title, id, endpoint, show_age) {
         this.title = title;
         this.id = id;
         this.endpoint = endpoint;
 
-        this.initDiv();
+        this.initDiv(show_age);
 
         const keys = ['co2', 'temperature', 'humidity', 'pressure'];
         this.initRows(keys);
@@ -37,7 +39,7 @@ class Card {
         this.update();
     }
 
-    initDiv() {
+    initDiv(show_age) {
         this.outer = document.createElement('div');
         this.outer.id = this.id;
         this.outer.classList.add('card-outer');
@@ -53,7 +55,7 @@ class Card {
         span.classList.add('title');
         this.inner.appendChild(span);
 
-        if (this.id == 'latest' && !navigator.userAgent.includes('Kindle')) {
+        if (show_age) {
             this.age = document.createElement('span');
             this.age.id = 'age';
             span.appendChild(this.age);
@@ -148,6 +150,17 @@ function co2Status(co2) {
         return 'status-medium';
     }
     return 'status-low';
+}
+
+async function lowRefreshRate() {
+    function fps() {
+        return new Promise(resolve =>
+            requestAnimationFrame(start =>
+                requestAnimationFrame(end => resolve(1000 / (end - start)))
+            )
+        )
+    } 
+    return window.requestAnimationFrame && await fps() < 5;
 }
 
 setup()
