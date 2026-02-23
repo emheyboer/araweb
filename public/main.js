@@ -53,7 +53,7 @@ class Card {
         span.classList.add('title');
         this.inner.appendChild(span);
 
-        if (this.id == 'latest') {
+        if (this.id == 'latest' && !navigator.userAgent.includes('Kindle')) {
             this.age = document.createElement('span');
             this.age.id = 'age';
             span.appendChild(this.age);
