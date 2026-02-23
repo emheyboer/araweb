@@ -1,5 +1,11 @@
 async function setup() {
-    const show_age = !(await lowRefreshRate());
+    const low_refresh_rate = await lowRefreshRate();
+    if (low_refresh_rate) {
+        const color = matchMedia('(prefers-color-scheme: dark)').matches ? 'white' : 'black';
+        document.body.style.setProperty('--color-low', color);
+        document.body.style.setProperty('--color-medium', color);
+        document.body.style.setProperty('--color-high', color);
+    }
 
     const output = document.getElementById('output');
 
@@ -20,7 +26,7 @@ async function setup() {
 
     for (let i = 0; i < cards.length; i++) {
         const [title, id, endpoint] = cards[i];
-        const card = new Card(title, id, endpoint, id == 'latest' && show_age);
+        const card = new Card(title, id, endpoint, id == 'latest' && !low_refresh_rate);
         output.appendChild(card.html);
     }
 }

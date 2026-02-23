@@ -1,6 +1,10 @@
 html {
     font-family: Verdana, sans-serif;
     touch-action: manipulation;
+    
+    --color-low: green;
+    --color-medium: darkorange;
+    --color-high: red;
 }
 
 * {
@@ -47,15 +51,12 @@ div {
 }
 
 .status-low {
-    --color-low: green;
     color: var(--color-low);
 }
 .status-medium {
-    --color-medium: darkorange;
     color: var(--color-medium);
 }
 .status-high {
-    --color-high: red;
     color: var(--color-high);
 }
 
