@@ -17,8 +17,10 @@ const server = http.createServer(async function(req, res) {
         await apiCall(endpoint, res);
     } else if (req.url.startsWith('/api')) {
         res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/plain');
-        res.end(`available versions:\n/v1`);   
+        res.setHeader('Content-Type', 'text/html');
+        res.end(`<link rel="stylesheet" type="text/css" href="../style.css">
+<pre>available versions:\n<a href="v1/">/v1</a></pre>`
+);   
     } else {
         const file = await streamFile(req.url);
         if (!file.found) {
@@ -200,8 +202,14 @@ async function apiCall(endpoint, res) {
         res.end(`${JSON.stringify(entry, null, 2)}`);
     } else if (endpoint == '/' || endpoint == '') {
         res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/plain');
-        res.end(`available endpoints:\n${Object.keys(endpoints).join('\n')}`);      
+        res.setHeader('Content-Type', 'text/html');
+        res.end(`<link rel="stylesheet" type="text/css" href="../../style.css">
+<pre>available endpoints:
+${Object.keys(endpoints).map(endpoint => 
+    `<a href="${endpoint.slice(1)}">${endpoint}</a>`)
+    .join('\n')
+}
+</pre>`);      
     } else {
         res.statusCode = 404;
         res.setHeader('Content-Type', 'text/plain');
