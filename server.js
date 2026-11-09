@@ -182,7 +182,7 @@ async function apiCall(endpoint, res) {
             return {value, ttl: 60};
         },
         "/count": () => {
-            const query = database.prepare(`select count(*) from records`);
+            const query = database.prepare(`select count(*) as count from records`);
             return {value: query.get(), ttl: 60};
         },
     }
